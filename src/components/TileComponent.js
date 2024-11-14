@@ -1,21 +1,32 @@
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, Typography, Box } from '@mui/material';
 
-const TileComponent = ({ activeCount, inactiveCount }) => {
+const TileComponent = ({ activeCount, inactiveCount, tabValue }) => {
   return (
-    <div style={{ display: 'flex', gap: '1rem' }}>
-      <Card>
-        <CardContent>
-          <Typography variant="h6">Active Securities</Typography>
-          <Typography variant="h4">{activeCount}</Typography>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent>
-          <Typography variant="h6">Inactive Securities</Typography>
-          <Typography variant="h4">{inactiveCount}</Typography>
-        </CardContent>
-      </Card>
+    <div>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Card sx={{
+          width: "15vw", height: "10vw", border: "2px solid black", display: "flex", flexDirection: "column", alignContent: "center", padding: "10px", margin: "2px", backgroundColor: "#e8f5e9", borderColor: "#2e7d32"
+        }}>
+          <Typography variant='h6' sx={{ textAlign: "center" }}>
+            {(tabValue === 0) ? "Active Equities" : "Active Bonds"}
+          </Typography>
+          <Typography variant='h1' sx={{ textAlign: "center" }}>
+            {activeCount}
+          </Typography>
+        </Card>
+        <Card sx={{
+          width: "15vw", height: "10vw", border: "2px solid black", display: "flex", flexDirection: "column", alignContent: "center", padding: "10px", margin: "2px",
+          backgroundColor: "#ffebee", borderColor: "#c62828",
+        }}>
+          <Typography variant='h6' sx={{ textAlign: "center" }}>
+            {(tabValue === 0) ? "Inactive Equities" : "Inactive Bonds"}
+          </Typography>
+          <Typography variant='h1' sx={{ textAlign: "center" }}>
+            {inactiveCount}
+          </Typography>
+        </Card>
+      </Box>
     </div>
   );
 };
