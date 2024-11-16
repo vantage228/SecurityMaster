@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-// eslint-disable-next-line
-import { Tabs, Tab, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Container, Card, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
 import TileComponent from './TileComponent';
+// import CircularProgress from '@mui/material/CircularProgress';
 
 const Bond = () => {
     const [editBondData, setEditBondData] = useState({
@@ -23,11 +23,10 @@ const Bond = () => {
     const fetchBonds = () => {
         axios.get("https://localhost:7298/api/Bond")
             .then((response) => {
-                setBondData(response.data) // Store streams for dropdown
-                console.log(response.data)
+                setBondData(response.data)
             })
             .catch((e) => {
-                console.log(e)
+                alert('Error - ' + e)
             })
     }
     const handleEditClick2 = (rowData) => {
@@ -111,11 +110,11 @@ const Bond = () => {
             })
             .catch((error) => {
                 if (error.response) {
-                    console.error('Server responded with error:', error.response.data);
+                    alert('Server responded with error:', error.response.data);
                 } else if (error.request) {
-                    console.error('No response received:', error.request);
+                    alert('No response received:', error.request);
                 } else {
-                    console.error('Error message:', error.message);
+                    alert('Error message:', error.message);
                 }
             });
         handleModalClose2();
@@ -185,7 +184,7 @@ const Bond = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {/* Modal for editing data */}
+            {/* Editing Table */}
             <Dialog open={isModalOpen2} onClose={handleModalClose2}>
                 <DialogTitle>Edit Bond Data</DialogTitle>
                 <DialogContent>

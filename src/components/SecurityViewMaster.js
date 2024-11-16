@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Box} from '@mui/material';
-
-import Bond from './Bond';
-import Equity from './Equity';
+// import Equity from './Equity';
 import Navbar from './Navbar';
+import Bonds from './Bonds';
+import Equity2 from './Equity2';
 
 function SecurityMasterPage() {
   const [tabValue, setTabValue] = useState(0);
@@ -22,8 +22,8 @@ function SecurityMasterPage() {
       </Tabs>
 
       <Box p={3}>
-        {tabValue === 0 && (<Equity tabValue={tabValue}/>)}
-        {tabValue === 1 && (<Bond tabValue={tabValue}/>)}
+        {tabValue === 0 && (<Equity2 tabValue={tabValue}/>)}
+        {tabValue === 1 && (<Bonds />)}
       </Box>
     </div>
   );

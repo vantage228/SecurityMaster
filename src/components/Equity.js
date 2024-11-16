@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from '@mui/material';
 import axios from 'axios';
 import TileComponent from './TileComponent';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Equity = ({ tabValue }) => {
     const [editData, setEditData] = useState({
@@ -18,17 +19,20 @@ const Equity = ({ tabValue }) => {
     });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-
     const [equityData, setequityData] = useState([])
+    const [isLoading, setisLoading] = useState(false)
+    const [active, setactive] = useState(true)
 
     const fetchEquities = () => {
+        setisLoading(true)
         axios.get("https://localhost:7298/api/Equity")
             .then((response) => {
-                setequityData(response.data) // Store streams for dropdown
-                console.log(response.data)
+                setisLoading(false)
+                setequityData(response.data)
             })
             .catch((e) => {
-                console.log(e)
+                setisLoading(false)
+                alert('Error - ' + e)
             })
     }
     const handleEditClick = (rowData) => {
@@ -94,7 +98,7 @@ const Equity = ({ tabValue }) => {
                 }
             })
             .catch((error) => {
-                console.error("Error submitting data:", error);
+                alert("Error submitting data:", error);
             });
         handleModalClose();
     };
@@ -121,48 +125,87 @@ const Equity = ({ tabValue }) => {
     useEffect(() => {
         fetchEquities()
     }, [])
+
+    const handleActive = () => {
+        setactive(true)
+    }
+
+    const handleInactive = () => {
+        setactive(false)
+    }
     return (
         <div>
-            <TileComponent activeCount={activeEquityCount} inactiveCount={inactiveEquityCount} tabValue={tabValue} />
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Security ID</TableCell>
-                            <TableCell>Security Name</TableCell>
-                            <TableCell>Description</TableCell>
-                            <TableCell>Active</TableCell>
-                            <TableCell>Pricing Currency</TableCell>
-                            <TableCell>Total Shares Outstanding</TableCell>
-                            <TableCell>Open Price</TableCell>
-                            <TableCell>Close Price</TableCell>
-                            <TableCell>Dividend Declared Date</TableCell>
-                            <TableCell>PF Credit Rating</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {equityData.map((row) => (
-                            <TableRow key={row.securityId}>
-                                <TableCell>{row.securityId}</TableCell>
-                                <TableCell>{row.securityName}</TableCell>
-                                <TableCell>{row.description}</TableCell>
-                                <TableCell>{(row.isActive === true) ? "true" : "false"}</TableCell>
-                                <TableCell>{row.pricingCurrency}</TableCell>
-                                <TableCell>{row.totalSharesOutstanding}</TableCell>
-                                <TableCell>{row.openPrice}</TableCell>
-                                <TableCell>{row.closePrice}</TableCell>
-                                <TableCell>{new Date(row.dividendDeclaredDate).toLocaleDateString()}</TableCell>
-                                <TableCell>{row.pfCreditRating}</TableCell>
-                                <TableCell sx={{ display: "flex" }}>
-                                    <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(row)}>Edit</Button>
-                                    <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(row.securityId)}>Deactivate</Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            {(isLoading) ?
+                <Box sx={{ height: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <CircularProgress size="5rem" />
+                </Box>
+                :
+                <>
+                    <TileComponent handleActive={handleActive} handleInactive={handleInactive} activeCount={activeEquityCount} inactiveCount={inactiveEquityCount} tabValue={tabValue} />
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Security ID</TableCell>
+                                    <TableCell>Security Name</TableCell>
+                                    <TableCell>Description</TableCell>
+                                    <TableCell>Active</TableCell>
+                                    <TableCell>Pricing Currency</TableCell>
+                                    <TableCell>Total Shares Outstanding</TableCell>
+                                    <TableCell>Open Price</TableCell>
+                                    <TableCell>Close Price</TableCell>
+                                    <TableCell>Dividend Declared Date</TableCell>
+                                    <TableCell>PF Credit Rating</TableCell>
+                                    <TableCell>Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            {(active) ?
+                                <TableBody>
+                                    {equityData.filter(security => security.isActive === true).map((row) => (
+                                        <TableRow key={row.securityId}>
+                                            <TableCell>{row.securityId}</TableCell>
+                                            <TableCell>{row.securityName}</TableCell>
+                                            <TableCell>{row.description}</TableCell>
+                                            <TableCell>{(row.isActive === true) ? "true" : "false"}</TableCell>
+                                            <TableCell>{row.pricingCurrency}</TableCell>
+                                            <TableCell>{row.totalSharesOutstanding}</TableCell>
+                                            <TableCell>{row.openPrice}</TableCell>
+                                            <TableCell>{row.closePrice}</TableCell>
+                                            <TableCell>{new Date(row.dividendDeclaredDate).toLocaleDateString()}</TableCell>
+                                            <TableCell>{row.pfCreditRating}</TableCell>
+                                            <TableCell sx={{ display: "flex" }}>
+                                                <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(row)}>Edit</Button>
+                                                <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(row.securityId)}>Deactivate</Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                                :
+                                <TableBody>
+                                    {equityData.filter(security => security.isActive === false).map((row) => (
+                                        <TableRow key={row.securityId}>
+                                            <TableCell>{row.securityId}</TableCell>
+                                            <TableCell>{row.securityName}</TableCell>
+                                            <TableCell>{row.description}</TableCell>
+                                            <TableCell>{(row.isActive === true) ? "true" : "false"}</TableCell>
+                                            <TableCell>{row.pricingCurrency}</TableCell>
+                                            <TableCell>{row.totalSharesOutstanding}</TableCell>
+                                            <TableCell>{row.openPrice}</TableCell>
+                                            <TableCell>{row.closePrice}</TableCell>
+                                            <TableCell>{new Date(row.dividendDeclaredDate).toLocaleDateString()}</TableCell>
+                                            <TableCell>{row.pfCreditRating}</TableCell>
+                                            <TableCell sx={{ display: "flex" }}>
+                                                <Button disabled sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(row)}>Edit</Button>
+                                                <Button disabled sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(row.securityId)}>Deactivate</Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            }
+                        </Table>
+                    </TableContainer>
+                </>
+            }
             {/* Modal for editing data */}
             <Dialog open={isModalOpen} onClose={handleModalClose}>
                 <DialogTitle>Edit Equity Data</DialogTitle>
@@ -170,6 +213,7 @@ const Equity = ({ tabValue }) => {
                     <TextField
                         name="securityName"
                         label="Security Name"
+                        disabled
                         fullWidth
                         margin="dense"
                         value={editData?.securityName || ""}

@@ -20,6 +20,12 @@ const Navbar = () => {
                     <Button color="inherit" onClick={() => navigate('/file-upload')}>
                         File Uploader
                     </Button>
+                    {/* <Button color="inherit" onClick={() => navigate('/equity-log')}>
+                        Equity Log
+                    </Button>
+                    <Button color="inherit" onClick={() => navigate('/bond-log')}>
+                        Bond Log
+                    </Button> */}
                 </Toolbar>
             </AppBar>
         </div>

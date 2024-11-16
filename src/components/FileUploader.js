@@ -33,9 +33,8 @@ function FileUploader() {
       alert('Please upload a file before submitting.');
       return;
     }
-
     const formData = new FormData();
-    formData.append('file', files[0]); // Attach first file
+    formData.append('file', files[0]);
 
     setUploading(true);
 
@@ -49,7 +48,6 @@ function FileUploader() {
       });
 
       alert(response.data);
-      // alert('Submitting Data');
     }
     catch (error) {
       console.error('Error during file upload:', error.response || error.message);
