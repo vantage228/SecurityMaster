@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import axios from 'axios';
 import Navbar from './Navbar';
 
-const LogTable = () => {
+const EquityLogTable = () => {
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -11,7 +11,8 @@ const LogTable = () => {
     useEffect(() => {
         const fetchLogs = async () => {
             try {
-                const response = await axios.get('https://localhost:7298/api/log/bondlogs');
+                const response = await axios.get('https://localhost:7298/api/log');
+                console.log(response.data)
                 setLogs(response.data);
                 setLoading(false);
             } catch (err) {
@@ -58,7 +59,7 @@ const LogTable = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {logs.map((log) => (
+                    {logs.filter(equity=>equity.tableType==='Bond').map((log) => (
                         <TableRow key={log.logId}>
                             <TableCell>{log.logId}</TableCell>
                             <TableCell>{log.securityId}</TableCell>
@@ -78,4 +79,4 @@ const LogTable = () => {
     );
 };
 
-export default LogTable;
+export default EquityLogTable;

@@ -6,6 +6,7 @@ import SecurityViewMaster from './components/SecurityViewMaster';
 import FileUploader from './components/FileUploader';
 import EquityLogTable from './components/EquityLogTable';
 import BondLogTable from './components/BondLogTable';
+import View from './components/View';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/file-upload" element={<FileUploader />} />
       <Route path="/equity-log" element={<EquityLogTable />} />
       <Route path="/bond-log" element={<BondLogTable />} />
+      <Route path="/view-sp" element={<View/>} />
     </Routes>
   </Router>
   );

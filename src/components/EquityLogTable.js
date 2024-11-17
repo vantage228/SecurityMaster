@@ -11,7 +11,8 @@ const EquityLogTable = () => {
     useEffect(() => {
         const fetchLogs = async () => {
             try {
-                const response = await axios.get('https://localhost:7298/api/log/equitylogs');
+                const response = await axios.get('https://localhost:7298/api/log');
+                console.log(response.data)
                 setLogs(response.data);
                 setLoading(false);
             } catch (err) {
@@ -58,7 +59,7 @@ const EquityLogTable = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {logs.map((log) => (
+                    {logs.filter(equity=>equity.tableType==='Equity').map((log) => (
                         <TableRow key={log.logId}>
                             <TableCell>{log.logId}</TableCell>
                             <TableCell>{log.securityId}</TableCell>

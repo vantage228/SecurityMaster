@@ -38,14 +38,27 @@ const Bonds = () => {
         fetchBonds(dispatch);
     }, []);
 
+    const investmentGradeRatings = [
+        { value: "AAA", label: "AAA (highest quality)" },
+        { value: "AA+", label: "AA+" },
+        { value: "AA", label: "AA" },
+        { value: "AA-", label: "AA-" },
+        { value: "A+", label: "A+" },
+        { value: "A", label: "A" },
+        { value: "A-", label: "A-" },
+        { value: "BBB+", label: "BBB+" },
+        { value: "BBB", label: "BBB" },
+        { value: "BBB-", label: "BBB- (lowest investment grade)" },
+    ];
+
     const handleActiveBond = () => {
         setactiveBond(true)
-        console.log('Bond' , activeBond)
+        console.log('Bond', activeBond)
     }
-    
+
     const handleInactiveBond = () => {
         setactiveBond(false)
-        console.log('Bond' , activeBond)
+        console.log('Bond', activeBond)
     }
 
     return (
@@ -75,50 +88,50 @@ const Bonds = () => {
                                     <TableCell>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
-                            { (activeBond)?
+                            {(activeBond) ?
                                 <TableBody>
-                                {state.bondData.filter(security => security.isActive).map((bond) => (
-                                    <TableRow key={bond.securityID}>
-                                        <TableCell>{bond.securityID}</TableCell>
-                                        <TableCell>{bond.securityName}</TableCell>
-                                        <TableCell>{bond.securityDescription}</TableCell>
-                                        <TableCell>{bond.coupon}</TableCell>
-                                        <TableCell>{new Date(bond.penultimateCouponDate).toLocaleDateString()}</TableCell>
-                                        <TableCell>{bond.formPFCreditRating}</TableCell>
-                                        <TableCell>{new Date(bond.maturityDate).toLocaleDateString()}</TableCell>
-                                        <TableCell>{bond.isCallable ? 'True' : 'False'}</TableCell>
-                                        <TableCell>{bond.askPrice}</TableCell>
-                                        <TableCell>{bond.bidPrice}</TableCell>
-                                        <TableCell>{bond.isActive ? 'True' : 'False'}</TableCell>
-                                        <TableCell sx={{width:"190px"}}>
-                                            <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(bond)}>Edit</Button>
-                                            <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained"  onClick={() => handleDeleteClick(bond.securityID)}>Deactivate</Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                            :
-                            <TableBody>
-                                {state.bondData.filter(security => !security.isActive).map((bond) => (
-                                    <TableRow key={bond.securityID}>
-                                        <TableCell>{bond.securityID}</TableCell>
-                                        <TableCell>{bond.securityName}</TableCell>
-                                        <TableCell>{bond.securityDescription}</TableCell>
-                                        <TableCell>{bond.coupon}</TableCell>
-                                        <TableCell>{new Date(bond.penultimateCouponDate).toLocaleDateString()}</TableCell>
-                                        <TableCell>{bond.formPFCreditRating}</TableCell>
-                                        <TableCell>{new Date(bond.maturityDate).toLocaleDateString()}</TableCell>
-                                        <TableCell>{bond.isCallable ? 'True' : 'False'}</TableCell>
-                                        <TableCell>{bond.askPrice}</TableCell>
-                                        <TableCell>{bond.bidPrice}</TableCell>
-                                        <TableCell>{bond.isActive ? 'True' : 'False'}</TableCell>
-                                        <TableCell>
-                                            <Button disabled variant="contained" color="primary" onClick={() => handleEditClick(bond)}>Edit</Button>
-                                            <Button disabled variant="contained" color="secondary" onClick={() => handleDeleteClick(bond.securityID)}>Deactivate</Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
+                                    {state.bondData.filter(security => security.isActive).map((bond) => (
+                                        <TableRow key={bond.securityID}>
+                                            <TableCell>{bond.securityID}</TableCell>
+                                            <TableCell>{bond.securityName}</TableCell>
+                                            <TableCell>{bond.securityDescription}</TableCell>
+                                            <TableCell>{bond.coupon}</TableCell>
+                                            <TableCell>{new Date(bond.penultimateCouponDate).toLocaleDateString()}</TableCell>
+                                            <TableCell>{bond.formPFCreditRating}</TableCell>
+                                            <TableCell>{new Date(bond.maturityDate).toLocaleDateString()}</TableCell>
+                                            <TableCell>{bond.isCallable ? 'True' : 'False'}</TableCell>
+                                            <TableCell>{bond.askPrice}</TableCell>
+                                            <TableCell>{bond.bidPrice}</TableCell>
+                                            <TableCell>{bond.isActive ? 'True' : 'False'}</TableCell>
+                                            <TableCell sx={{ width: "190px" }}>
+                                                <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(bond)}>Edit</Button>
+                                                <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(bond.securityID)}>Deactivate</Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                                :
+                                <TableBody>
+                                    {state.bondData.filter(security => !security.isActive).map((bond) => (
+                                        <TableRow key={bond.securityID}>
+                                            <TableCell>{bond.securityID}</TableCell>
+                                            <TableCell>{bond.securityName}</TableCell>
+                                            <TableCell>{bond.securityDescription}</TableCell>
+                                            <TableCell>{bond.coupon}</TableCell>
+                                            <TableCell>{new Date(bond.penultimateCouponDate).toLocaleDateString()}</TableCell>
+                                            <TableCell>{bond.formPFCreditRating}</TableCell>
+                                            <TableCell>{new Date(bond.maturityDate).toLocaleDateString()}</TableCell>
+                                            <TableCell>{bond.isCallable ? 'True' : 'False'}</TableCell>
+                                            <TableCell>{bond.askPrice}</TableCell>
+                                            <TableCell>{bond.bidPrice}</TableCell>
+                                            <TableCell>{bond.isActive ? 'True' : 'False'}</TableCell>
+                                            <TableCell sx={{ width: "190px" }}>
+                                                <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(bond)}>Edit</Button>
+                                                <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(bond.securityID)}>Deactivate</Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
                             }
                         </Table>
                     </TableContainer>
@@ -132,7 +145,21 @@ const Bonds = () => {
                     <TextField name="securityDescription" label="Description" fullWidth margin="dense" value={state.editBondData.securityDescription} onChange={handleInputChange} />
                     <TextField name="coupon" label="Coupon" type="number" fullWidth margin="dense" value={state.editBondData.coupon} onChange={handleInputChange} />
                     <TextField name="penultimateCouponDate" label="Penultimate Coupon Date" type="date" fullWidth margin="dense" value={state.editBondData.penultimateCouponDate.split("T")[0]} onChange={handleInputChange} />
-                    <TextField name="formPFCreditRating" label="PF Credit Rating" fullWidth margin="dense" value={state.editBondData.formPFCreditRating} onChange={handleInputChange} />
+                    <FormControl fullWidth margin="dense">
+                        <InputLabel id="formPFCreditRating-label">PF Credit Rating</InputLabel>
+                        <Select
+                            labelId="formPFCreditRating-label"
+                            name="formPFCreditRating"
+                            value={state.editBondData.formPFCreditRating || ""}
+                            onChange={handleInputChange}
+                        >
+                            {investmentGradeRatings.map((rating) => (
+                                <MenuItem key={rating.value} value={rating.value}>
+                                    {rating.label}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <TextField name="askPrice" label="Ask Price" type="number" fullWidth margin="dense" value={state.editBondData.askPrice} onChange={handleInputChange} />
                     <TextField name="bidPrice" label="Bid Price" type="number" fullWidth margin="dense" value={state.editBondData.bidPrice} onChange={handleInputChange} />
                     <TextField name="maturityDate" label="Maturity Date" type="date" fullWidth margin="dense" disabled value={state.editBondData.maturityDate.split("T")[0]} onChange={handleInputChange} />

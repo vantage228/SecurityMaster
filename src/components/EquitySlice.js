@@ -9,14 +9,15 @@ export const initialState = {
     editData: {
         securityId: "",
         securityName: "",
-        description: "",
+        securityDescription: "",
         isActive: "",
         pricingCurrency: "",
         totalSharesOutstanding: "",
         openPrice: "",
         closePrice: "",
         dividendDeclaredDate: "",
-        pfCreditRating: ""
+        pfCreditRating: "",
+        YtdReturn:""
     }
 };
 
@@ -40,20 +41,20 @@ export const equityReducer = (state, action) => {
             return { ...state, isLoading: false, equityData: action.payload };
         case FETCH_FAILURE:
             return { ...state, isLoading: false, error: action.error };
-        case EDIT_EQUITY:
-            return {
-                ...state,
-                equityData: state.equityData.map(equity =>
-                    equity.securityId === action.payload.securityId ? action.payload : equity
-                ),
-                isModalOpen: false,
-                editData: initialState.editData,
-            };
+            case EDIT_EQUITY:
+                return {
+                    ...state,
+                    equityData: state.equityData.map((equity) =>
+                        equity.securityID === action.payload.securityID ? { ...equity, ...action.payload } : equity
+                    ),
+                    isModalOpen: false,
+                    editData: { ...initialState.editData }, // Reset edit data after update
+                };
         case DELETE_EQUITY:
             return {
                 ...state,
                 equityData: state.equityData.map(equity =>
-                    equity.securityId === action.payload ? { ...equity, isActive: false } : equity
+                    equity.securityID === action.payload ? { ...equity, isActive: false } : equity
                 ),
             };
         case SET_ACTIVE:
