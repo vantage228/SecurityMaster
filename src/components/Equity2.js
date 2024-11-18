@@ -4,6 +4,7 @@ import { initialState, equityReducer, fetchEquities, editEquity, deleteEquity, s
 import TileComponent from './TileComponent';
 import '../assets/Equity2.css';
 import SecurityDetails from './SecurityDetails';
+import EquitySummaryWithCharts from './EquitySummaryWithCharts';
 
 const Equity2 = ({ tabValue }) => {
     const [displayAllDetailDialog, setDisplayAllDetailDialog] = useState(false);
@@ -16,6 +17,26 @@ const Equity2 = ({ tabValue }) => {
     const [filterEndDate, setFilterEndDate] = useState('');
     const [filterCreditRating, setFilterCreditRating] = useState('');
 
+    //EquitySummaryDashboard
+    const [openSummary, setOpenSummary] = useState(false)
+
+    //Pricing Currency Mapping
+    const [currencies, setCurrencies] = useState([])
+    const getCurrencySymbol = (currencyCode) => {
+        const currency = currencies.find((c) => c.code === currencyCode);
+        return currency ? currency.symbol : '';
+    };
+
+    //Validation of TextBox
+    const [errorMessages, setErrorMessages] = useState({
+        totalSharesOutstanding: '',
+        openPrice: '',
+        closePrice: '',
+        dividendDeclaredDate: ''
+    });
+
+
+
     const handleReset = () => {
         setFilterName('')
         setFilterStartDate('')
@@ -23,8 +44,20 @@ const Equity2 = ({ tabValue }) => {
         setFilterCreditRating('')
     }
 
+    const handleSummaryOpen = () => {
+        setOpenSummary(true)
+    }
+
+    const handleSummaryClose = () => {
+        setOpenSummary(false)
+    }
+
     useEffect(() => {
         fetchEquities(dispatch);
+        fetch('/currencies.json')
+            .then((response) => response.json())
+            .then((data) => setCurrencies(data))
+            .catch((error) => console.error("Error fetching currencies:", error));
     }, []);
 
     const handleEditClick = (rowData) => {
@@ -37,8 +70,23 @@ const Equity2 = ({ tabValue }) => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        // Validate the number fields to ensure no more than 9 digits
+        if (name === "totalSharesOutstanding" || name === "openPrice" || name === "closePrice") {
+            if (value.length > 9) {
+                setErrorMessages((prev) => ({
+                    ...prev,
+                    [name]: "INPUT SHOULD BE LESS THAN 999999999"
+                }));
+            } else {
+                setErrorMessages((prev) => ({
+                    ...prev,
+                    [name]: ""
+                }));
+            }
+        }
         updateEditData(dispatch, name, value);
     };
+    const isFormInvalid = Object.values(errorMessages).some((msg) => msg !== '');
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -109,9 +157,9 @@ const Equity2 = ({ tabValue }) => {
                     <TileComponent handleActive={handleActive} handleInactive={handleInactive} activeCount={activeEquityCount} inactiveCount={inactiveEquityCount} tabValue={tabValue} />
 
                     {/* Filters */}
-                    <Box sx={{ display: 'flex', justifyContent:"center", gap: 2, marginBottom: 2 , marginTop: 4}}>
+                    <Box sx={{ display: 'flex', justifyContent: "center", gap: 2, marginBottom: 2, marginTop: 4 }}>
                         <TextField
-                            sx={{width:"30vw"}}
+                            sx={{ width: "30vw" }}
                             name="filterName"
                             label="Filter by Security Name"
                             variant="outlined"
@@ -140,7 +188,7 @@ const Equity2 = ({ tabValue }) => {
                         <FormControl>
                             <InputLabel id="filterCreditRating-label">Filter by Credit Rating</InputLabel>
                             <Select
-                                sx={{width:"20vw"}}
+                                sx={{ width: "20vw" }}
                                 labelId="filterCreditRating-label"
                                 name="filterCreditRating"
                                 value={filterCreditRating}
@@ -155,6 +203,7 @@ const Equity2 = ({ tabValue }) => {
                             </Select>
                         </FormControl>
                         <Button variant='contained' color='warning' onClick={handleReset}>Reset Filters</Button>
+                        <Button variant='contained' color='warning' onClick={handleSummaryOpen}>Summary</Button>
                     </Box>
 
                     <TableContainer component={Paper}>
@@ -186,8 +235,12 @@ const Equity2 = ({ tabValue }) => {
                                         <TableCell>{row.isActive ? "true" : "false"}</TableCell>
                                         <TableCell>{row.pricingCurrency}</TableCell>
                                         <TableCell>{row.totalSharesOutstanding}</TableCell>
-                                        <TableCell>{row.openPrice}</TableCell>
-                                        <TableCell>{row.closePrice}</TableCell>
+                                        <TableCell>
+                                            {`${getCurrencySymbol(row.pricingCurrency)}${row.openPrice}`}
+                                        </TableCell>
+                                        <TableCell>
+                                            {`${getCurrencySymbol(row.pricingCurrency)}${row.closePrice}`}
+                                        </TableCell>
                                         <TableCell>{new Date(row.dividendDeclaredDate).toLocaleDateString()}</TableCell>
                                         <TableCell>{row.formPFCreditRating}</TableCell>
                                         <TableCell>
@@ -210,6 +263,9 @@ const Equity2 = ({ tabValue }) => {
             {/* Security Details */}
             <SecurityDetails securityID={displaySecurityID} open={displayAllDetailDialog} setOpen={setDisplayAllDetailDialog} />
 
+            <EquitySummaryWithCharts open={openSummary} onClose={handleSummaryClose} equityData={state.equityData} />
+
+
             {/* Edit Dialog */}
             <Dialog open={state.isModalOpen} onClose={handleModalClose}>
                 <DialogTitle>Edit Equity Data</DialogTitle>
@@ -231,41 +287,52 @@ const Equity2 = ({ tabValue }) => {
                         value={state.editData.securityDescription || ""}
                         onChange={handleInputChange}
                     />
-                    <TextField
-                        name="pricingCurrency"
-                        label="Pricing Currency"
-                        fullWidth
-                        margin="dense"
-                        value={state.editData.pricingCurrency || ""}
-                        onChange={handleInputChange}
-                    />
+                    <FormControl fullWidth margin="dense">
+                        <InputLabel id="pricingCurrency-label">Pricing Currency</InputLabel>
+                        <Select
+                            labelId="pricingCurrency-label"
+                            name="pricingCurrency"
+                            value={state.editData.pricingCurrency || ""}
+                            onChange={handleInputChange}
+                        >
+                            {currencies.map((currency) => (
+                                <MenuItem key={currency.code} value={currency.code}>
+                                    {currency.name} ({currency.code})
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <TextField
                         name="totalSharesOutstanding"
                         label="Total Shares Outstanding"
-                        fullWidth
-                        margin="dense"
-                        type="number"
-                        value={state.editData.totalSharesOutstanding || ""}
+                        value={state.editData.totalSharesOutstanding}
                         onChange={handleInputChange}
+                        fullWidth
+                        error={!!errorMessages.totalSharesOutstanding}
+                        helperText={errorMessages.totalSharesOutstanding}
+
                     />
+
                     <TextField
                         name="openPrice"
                         label="Open Price"
-                        fullWidth
-                        margin="dense"
-                        type="number"
-                        value={state.editData.openPrice || ""}
+                        value={state.editData.openPrice}
                         onChange={handleInputChange}
+                        fullWidth
+                        error={!!errorMessages.openPrice}
+                        helperText={errorMessages.openPrice}
                     />
+
                     <TextField
                         name="closePrice"
                         label="Close Price"
-                        fullWidth
-                        margin="dense"
-                        type="number"
-                        value={state.editData.closePrice || ""}
+                        value={state.editData.closePrice}
                         onChange={handleInputChange}
+                        fullWidth
+                        error={!!errorMessages.closePrice}
+                        helperText={errorMessages.closePrice}
                     />
+
                     <TextField
                         name="dividendDeclaredDate"
                         label="Dividend Declared Date"
@@ -293,7 +360,13 @@ const Equity2 = ({ tabValue }) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleModalClose} color="secondary">Cancel</Button>
-                    <Button onClick={handleSubmit} color="primary">Save</Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit}
+                        disabled={isFormInvalid}
+                    > Save
+                    </Button>
                 </DialogActions>
             </Dialog>
         </div>

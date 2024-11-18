@@ -46,10 +46,15 @@ function FileUploader() {
       const response = await axios.post(apiUrl, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      
-      (response.data.includes("Database Error"))? alert('DB Error: Duplicate Security Name Not Allowed'): alert(response.data)
+      // console.log(response)
+      alert(response.data)
     }
     catch (error) {
+      // console.log(error)
+      if(error.response.data.includes("DB ERROR") || error.response.data.includes("Error: Violation")){
+        alert("Duplicate Data Not Allowed");
+        return;
+      }
       alert(`Error: ${error.response?.data || 'An error occurred while uploading the file.'}`);
     } 
     finally {

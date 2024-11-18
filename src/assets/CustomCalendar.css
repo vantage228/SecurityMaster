@@ -1,0 +1,58 @@
+/* Entire Calendar Background */
+.custom-calendar {
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+}
+
+/* Weekday Labels */
+.react-calendar__month-view__weekdays {
+  font-weight: bold;
+  color: white;
+}
+
+/* Days */
+.react-calendar__tile {
+  color: white;
+  background: none;
+  border: none;
+}
+
+/* Highlighted Dates */
+.react-calendar__tile.highlight {
+  background-color: rgb(255, 0, 0);
+  color: black;
+  border-radius: 50%;
+}
+
+/* Selected Day */
+.react-calendar__tile--active {
+  background-color: #555;
+  color: white;
+  border-radius: 50%;
+}
+
+/* Navigation (Year/Month) */
+.react-calendar__navigation button {
+  color: white;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.react-calendar__tile.highlight{
+  overflow: visible !important;
+}
+/* Navigation Button Hover */
+.react-calendar__navigation button:hover {
+  color: yellow;
+}
+
+/* Border for Calendar */
+.custom-calendar {
+  padding: 10px;
+  border-radius: 10px;
+}

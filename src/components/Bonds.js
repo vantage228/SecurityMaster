@@ -4,6 +4,7 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
 import { bondReducer, initialState, fetchBonds, setEditBond, closeModal, editBond, deleteBond } from './BondSlice';
 import TileComponent from './TileComponent';
 import SecurityDetails from './SecurityDetails';
+import BondSummaryWithCharts from './BondSummaryWithCharts';
 
 const investmentGradeRatings = [
     { value: 'AAA', label: 'AAA' },
@@ -18,22 +19,39 @@ const investmentGradeRatings = [
     { value: 'BBB-', label: 'BBB-' }
 ];
 
+
 const Bonds = () => {
     const [displayAllDetailDialog, setDisplayAllDetailDialog] = useState(false);
     const [displaySecurityID, setDisplaySecurityID] = useState('');
     const [state, dispatch] = useReducer(bondReducer, initialState);
     const [activeBond, setActiveBond] = useState(true);
 
-    
+
     const [filterName, setFilterName] = useState('');
     const [filterStartDate, setFilterStartDate] = useState('');
     const [filterEndDate, setFilterEndDate] = useState('');
+
+    const [openSummary, setOpenSummary] = useState(false)
+    const handleSummaryOpen = () => {
+        setOpenSummary(true)
+    }
+
+    const handleSummaryClose = () => {
+        setOpenSummary(false)
+    }
 
     const handleResetFilters = () => {
         setFilterName('')
         setFilterStartDate('')
         setFilterEndDate('')
     }
+
+    const [helperText, setHelperText] = useState({
+        coupon: '',
+        askPrice: '',
+        bidPrice: '',
+    });
+
 
     useEffect(() => {
         fetchBonds(dispatch);
@@ -45,11 +63,28 @@ const Bonds = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+
+        // Validate fields with long numeric input
+        if (name === 'coupon' || name === 'askPrice' || name === 'bidPrice') {
+            if (value.length > 9) {
+                setHelperText((prev) => ({
+                    ...prev,
+                    [name]: 'Value is too large',
+                }));
+            } else {
+                setHelperText((prev) => ({
+                    ...prev,
+                    [name]: '',
+                }));
+            }
+        }
+
         dispatch({
             type: 'SET_EDIT_BOND',
             payload: { ...state.editBondData, [name]: value }
         });
     };
+    const isFormInvalid = Object.values(helperText).some((msg) => msg !== '');
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -108,17 +143,17 @@ const Bonds = () => {
                 </Box>
             ) : (
                 <>
-                    <TileComponent 
-                        handleActiveBond={handleActiveBond} 
-                        handleInactiveBond={handleInactiveBond} 
-                        activeCount={state.bondData.filter(b => b.isActive).length} 
-                        inactiveCount={state.bondData.filter(b => !b.isActive).length} 
+                    <TileComponent
+                        handleActiveBond={handleActiveBond}
+                        handleInactiveBond={handleInactiveBond}
+                        activeCount={state.bondData.filter(b => b.isActive).length}
+                        inactiveCount={state.bondData.filter(b => !b.isActive).length}
                     />
 
                     {/* Added Filters */}
-                    <Box sx={{ display: 'flex', justifyContent:"center", gap: 2, marginBottom: 2 , marginTop: 4}}>
+                    <Box sx={{ display: 'flex', justifyContent: "center", gap: 2, marginBottom: 2, marginTop: 4 }}>
                         <TextField
-                            sx={{width:"30vw"}}
+                            sx={{ width: "30vw" }}
                             name="filterName"
                             label="Filter by Security Name"
                             variant="outlined"
@@ -145,6 +180,7 @@ const Bonds = () => {
                             onChange={handleFilterChange}
                         />
                         <Button variant='contained' color='warning' onClick={handleResetFilters}>Reset Filters</Button>
+                        <Button variant='contained' color='warning' onClick={handleSummaryOpen}>Summary</Button>
                     </Box>
 
                     <TableContainer component={Paper}>
@@ -195,12 +231,24 @@ const Bonds = () => {
 
             <SecurityDetails securityID={displaySecurityID} open={displayAllDetailDialog} setOpen={setDisplayAllDetailDialog} />
 
+            <BondSummaryWithCharts open={openSummary} onClose={handleSummaryClose} bondData={state.bondData} />
+
             <Dialog open={state.isModalOpen} onClose={handleModalClose}>
                 <DialogTitle>Edit Bond Data</DialogTitle>
                 <DialogContent>
                     <TextField name="securityName" label="Security Name" fullWidth margin="dense" disabled value={state.editBondData.securityName} onChange={handleInputChange} />
                     <TextField name="securityDescription" label="Description" fullWidth margin="dense" value={state.editBondData.securityDescription} onChange={handleInputChange} />
-                    <TextField name="coupon" label="Coupon" type="number" fullWidth margin="dense" value={state.editBondData.coupon} onChange={handleInputChange} />
+                    <TextField
+                        name="coupon"
+                        label="Coupon"
+                        type="number"
+                        fullWidth
+                        margin="dense"
+                        value={state.editBondData.coupon}
+                        onChange={handleInputChange}
+                        error={helperText.coupon !== ''}
+                        helperText={helperText.coupon}
+                    />
                     <TextField name="penultimateCouponDate" label="Penultimate Coupon Date" type="date" fullWidth margin="dense" value={state.editBondData.penultimateCouponDate.split("T")[0]} onChange={handleInputChange} />
                     <FormControl fullWidth margin="dense">
                         <InputLabel id="formPFCreditRating-label">PF Credit Rating</InputLabel>
@@ -217,8 +265,28 @@ const Bonds = () => {
                             ))}
                         </Select>
                     </FormControl>
-                    <TextField name="askPrice" label="Ask Price" type="number" fullWidth margin="dense" value={state.editBondData.askPrice} onChange={handleInputChange} />
-                    <TextField name="bidPrice" label="Bid Price" type="number" fullWidth margin="dense" value={state.editBondData.bidPrice} onChange={handleInputChange} />
+                    <TextField
+                        name="askPrice"
+                        label="Ask Price"
+                        type="number"
+                        fullWidth
+                        margin="dense"
+                        value={state.editBondData.askPrice}
+                        onChange={handleInputChange}
+                        error={helperText.askPrice !== ''}
+                        helperText={helperText.askPrice}
+                    />
+                    <TextField
+                        name="bidPrice"
+                        label="Bid Price"
+                        type="number"
+                        fullWidth
+                        margin="dense"
+                        value={state.editBondData.bidPrice}
+                        onChange={handleInputChange}
+                        error={helperText.bidPrice !== ''}
+                        helperText={helperText.bidPrice}
+                    />
                     <FormControl fullWidth margin="dense">
                         <InputLabel id="isCallable-label">Is Callable</InputLabel>
                         <Select
@@ -233,7 +301,7 @@ const Bonds = () => {
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
+                    <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isFormInvalid}>Save</Button>
                     <Button onClick={handleModalClose} variant="contained" color="secondary">Cancel</Button>
                 </DialogActions>
             </Dialog>
