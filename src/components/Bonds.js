@@ -1,17 +1,43 @@
 // Bonds.js
 import React, { useReducer, useEffect, useState } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
 import { bondReducer, initialState, fetchBonds, setEditBond, closeModal, editBond, deleteBond } from './BondSlice';
 import TileComponent from './TileComponent';
-import CircularProgress from '@mui/material/CircularProgress';
 import SecurityDetails from './SecurityDetails';
 
-const Bonds = () => {
-    const [displayAllDetailDialog, setDisplayAllDetailDialog] = useState(false)
-    const [displaySecurityID, setDisplaySecurityID] = useState('')
+const investmentGradeRatings = [
+    { value: 'AAA', label: 'AAA' },
+    { value: 'AA+', label: 'AA+' },
+    { value: 'AA', label: 'AA' },
+    { value: 'AA-', label: 'AA-' },
+    { value: 'A+', label: 'A+' },
+    { value: 'A', label: 'A' },
+    { value: 'A-', label: 'A-' },
+    { value: 'BBB+', label: 'BBB+' },
+    { value: 'BBB', label: 'BBB' },
+    { value: 'BBB-', label: 'BBB-' }
+];
 
+const Bonds = () => {
+    const [displayAllDetailDialog, setDisplayAllDetailDialog] = useState(false);
+    const [displaySecurityID, setDisplaySecurityID] = useState('');
     const [state, dispatch] = useReducer(bondReducer, initialState);
-    const [activeBond, setactiveBond] = useState(true)
+    const [activeBond, setActiveBond] = useState(true);
+
+    
+    const [filterName, setFilterName] = useState('');
+    const [filterStartDate, setFilterStartDate] = useState('');
+    const [filterEndDate, setFilterEndDate] = useState('');
+
+    const handleResetFilters = () => {
+        setFilterName('')
+        setFilterStartDate('')
+        setFilterEndDate('')
+    }
+
+    useEffect(() => {
+        fetchBonds(dispatch);
+    }, []);
 
     const handleEditClick = (bond) => {
         setEditBond(dispatch, bond);
@@ -40,35 +66,39 @@ const Bonds = () => {
 
     const getDetail = (id) => {
         setDisplayAllDetailDialog(true);
-        setDisplaySecurityID(id)
-    }
+        setDisplaySecurityID(id);
+    };
 
-    useEffect(() => {
-        fetchBonds(dispatch);
-    }, []);
+    // Added filter logic
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'filterName') setFilterName(value);
+        if (name === 'filterStartDate') setFilterStartDate(value);
+        if (name === 'filterEndDate') setFilterEndDate(value);
+    };
 
-    const investmentGradeRatings = [
-        { value: "AAA", label: "AAA (highest quality)" },
-        { value: "AA+", label: "AA+" },
-        { value: "AA", label: "AA" },
-        { value: "AA-", label: "AA-" },
-        { value: "A+", label: "A+" },
-        { value: "A", label: "A" },
-        { value: "A-", label: "A-" },
-        { value: "BBB+", label: "BBB+" },
-        { value: "BBB", label: "BBB" },
-        { value: "BBB-", label: "BBB- (lowest investment grade)" },
-    ];
+    const filteredData = state.bondData
+        .filter((bond) => {
+            // Filter by name
+            if (filterName && !bond.securityName.toLowerCase().includes(filterName.toLowerCase())) return false;
+
+            // Filter by date range
+            if (filterStartDate || filterEndDate) {
+                const bondDate = new Date(bond.maturityDate);
+                if (filterStartDate && bondDate < new Date(filterStartDate)) return false;
+                if (filterEndDate && bondDate > new Date(filterEndDate)) return false;
+            }
+            return true;
+        })
+        .filter((bond) => bond.isActive === activeBond);
 
     const handleActiveBond = () => {
-        setactiveBond(true)
-        console.log('Bond', activeBond)
-    }
+        setActiveBond(true);
+    };
 
     const handleInactiveBond = () => {
-        setactiveBond(false)
-        console.log('Bond', activeBond)
-    }
+        setActiveBond(false);
+    };
 
     return (
         <div>
@@ -78,7 +108,45 @@ const Bonds = () => {
                 </Box>
             ) : (
                 <>
-                    <TileComponent handleActiveBond={handleActiveBond} handleInactiveBond={handleInactiveBond} activeCount={state.bondData.filter(b => b.isActive).length} inactiveCount={state.bondData.filter(b => !b.isActive).length} />
+                    <TileComponent 
+                        handleActiveBond={handleActiveBond} 
+                        handleInactiveBond={handleInactiveBond} 
+                        activeCount={state.bondData.filter(b => b.isActive).length} 
+                        inactiveCount={state.bondData.filter(b => !b.isActive).length} 
+                    />
+
+                    {/* Added Filters */}
+                    <Box sx={{ display: 'flex', justifyContent:"center", gap: 2, marginBottom: 2 , marginTop: 4}}>
+                        <TextField
+                            sx={{width:"30vw"}}
+                            name="filterName"
+                            label="Filter by Security Name"
+                            variant="outlined"
+                            fullWidth
+                            value={filterName}
+                            onChange={handleFilterChange}
+                        />
+                        <TextField
+                            name="filterStartDate"
+                            label="Start Date"
+                            type="date"
+                            variant="outlined"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterStartDate}
+                            onChange={handleFilterChange}
+                        />
+                        <TextField
+                            name="filterEndDate"
+                            label="End Date"
+                            type="date"
+                            variant="outlined"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterEndDate}
+                            onChange={handleFilterChange}
+                        />
+                        <Button variant='contained' color='warning' onClick={handleResetFilters}>Reset Filters</Button>
+                    </Box>
+
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead>
@@ -97,54 +165,29 @@ const Bonds = () => {
                                     <TableCell>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
-                            {(activeBond) ?
-                                <TableBody>
-                                    {state.bondData.filter(security => security.isActive).map((bond) => (
-                                        <TableRow key={bond.securityID}>
-                                            <TableCell>
-                                                <Button onClick={() => getDetail(bond.securityID)}>{bond.securityID}
-                                                </Button>
-                                            </TableCell>
-                                            <TableCell>{bond.securityName}</TableCell>
-                                            <TableCell>{bond.securityDescription}</TableCell>
-                                            <TableCell>{bond.coupon}</TableCell>
-                                            <TableCell>{new Date(bond.penultimateCouponDate).toLocaleDateString()}</TableCell>
-                                            <TableCell>{bond.formPFCreditRating}</TableCell>
-                                            <TableCell>{new Date(bond.maturityDate).toLocaleDateString()}</TableCell>
-                                            <TableCell>{bond.isCallable ? 'True' : 'False'}</TableCell>
-                                            <TableCell>{bond.askPrice}</TableCell>
-                                            <TableCell>{bond.bidPrice}</TableCell>
-                                            <TableCell>{bond.isActive ? 'True' : 'False'}</TableCell>
-                                            <TableCell sx={{ width: "190px" }}>
-                                                <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(bond)}>Edit</Button>
-                                                <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(bond.securityID)}>Deactivate</Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                                :
-                                <TableBody>
-                                    {state.bondData.filter(security => !security.isActive).map((bond) => (
-                                        <TableRow key={bond.securityID}>
-                                            <TableCell>{bond.securityID}</TableCell>
-                                            <TableCell>{bond.securityName}</TableCell>
-                                            <TableCell>{bond.securityDescription}</TableCell>
-                                            <TableCell>{bond.coupon}</TableCell>
-                                            <TableCell>{new Date(bond.penultimateCouponDate).toLocaleDateString()}</TableCell>
-                                            <TableCell>{bond.formPFCreditRating}</TableCell>
-                                            <TableCell>{new Date(bond.maturityDate).toLocaleDateString()}</TableCell>
-                                            <TableCell>{bond.isCallable ? 'True' : 'False'}</TableCell>
-                                            <TableCell>{bond.askPrice}</TableCell>
-                                            <TableCell>{bond.bidPrice}</TableCell>
-                                            <TableCell>{bond.isActive ? 'True' : 'False'}</TableCell>
-                                            <TableCell sx={{ width: "190px" }}>
-                                                <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(bond)}>Edit</Button>
-                                                <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(bond.securityID)}>Deactivate</Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            }
+                            <TableBody>
+                                {filteredData.map((bond) => (
+                                    <TableRow key={bond.securityID}>
+                                        <TableCell>
+                                            <Button onClick={() => getDetail(bond.securityID)}>{bond.securityID}</Button>
+                                        </TableCell>
+                                        <TableCell>{bond.securityName}</TableCell>
+                                        <TableCell>{bond.securityDescription}</TableCell>
+                                        <TableCell>{bond.coupon}</TableCell>
+                                        <TableCell>{new Date(bond.penultimateCouponDate).toLocaleDateString()}</TableCell>
+                                        <TableCell>{bond.formPFCreditRating}</TableCell>
+                                        <TableCell>{new Date(bond.maturityDate).toLocaleDateString()}</TableCell>
+                                        <TableCell>{bond.isCallable ? 'True' : 'False'}</TableCell>
+                                        <TableCell>{bond.askPrice}</TableCell>
+                                        <TableCell>{bond.bidPrice}</TableCell>
+                                        <TableCell>{bond.isActive ? 'True' : 'False'}</TableCell>
+                                        <TableCell sx={{ width: "190px" }}>
+                                            <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(bond)}>Edit</Button>
+                                            <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(bond.securityID)}>Deactivate</Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
                         </Table>
                     </TableContainer>
                 </>
@@ -176,18 +219,22 @@ const Bonds = () => {
                     </FormControl>
                     <TextField name="askPrice" label="Ask Price" type="number" fullWidth margin="dense" value={state.editBondData.askPrice} onChange={handleInputChange} />
                     <TextField name="bidPrice" label="Bid Price" type="number" fullWidth margin="dense" value={state.editBondData.bidPrice} onChange={handleInputChange} />
-                    <TextField name="maturityDate" label="Maturity Date" type="date" fullWidth margin="dense" disabled value={state.editBondData.maturityDate.split("T")[0]} onChange={handleInputChange} />
                     <FormControl fullWidth margin="dense">
                         <InputLabel id="isCallable-label">Is Callable</InputLabel>
-                        <Select labelId="isCallable-label" name="isCallable" value={state.editBondData.isCallable} onChange={handleInputChange}>
+                        <Select
+                            labelId="isCallable-label"
+                            name="isCallable"
+                            value={state.editBondData.isCallable || false}
+                            onChange={handleInputChange}
+                        >
                             <MenuItem value={true}>True</MenuItem>
                             <MenuItem value={false}>False</MenuItem>
                         </Select>
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleModalClose} color="secondary">Cancel</Button>
-                    <Button onClick={handleSubmit} color="primary">Save</Button>
+                    <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
+                    <Button onClick={handleModalClose} variant="contained" color="secondary">Cancel</Button>
                 </DialogActions>
             </Dialog>
         </div>
