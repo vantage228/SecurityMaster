@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Tabs, Tab, Box} from '@mui/material';
 // import Equity from './Equity';
 import Navbar from './Navbar';
@@ -11,6 +11,12 @@ function SecurityMasterPage() {
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+    if(!isAuthenticated)
+      window.location.href = "/auth";
+  }, [])
 
   return (
 

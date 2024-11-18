@@ -1,10 +1,14 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useState,  useEffect, useReducer } from 'react';
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, TextField, DialogActions, CircularProgress, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { initialState, equityReducer, fetchEquities, editEquity, deleteEquity, setActive, openModal, closeModal, updateEditData } from './EquitySlice';
 import TileComponent from './TileComponent';
 import '../assets/Equity2.css'
+import SecurityDetails from './SecurityDetails';
 
 const Equity2 = ({ tabValue }) => {
+    const [displayAllDetailDialog, setDisplayAllDetailDialog] = useState(false)
+    const [displaySecurityID, setDisplaySecurityID] = useState('')
+
     const [state, dispatch] = useReducer(equityReducer, initialState);
 
     useEffect(() => {
@@ -42,6 +46,11 @@ const Equity2 = ({ tabValue }) => {
         setActive(dispatch, false);
         console.log(state.active)
     };
+
+    const getDetail = (id) => {
+        setDisplayAllDetailDialog(true);
+        setDisplaySecurityID(id)
+    }
 
     const investmentGradeRatings = [
         { value: "AAA", label: "AAA (highest quality)" },
@@ -91,7 +100,9 @@ const Equity2 = ({ tabValue }) => {
                                 <TableBody>
                                     {state.equityData.filter(security => security.isActive === true).map((row) => (
                                         <TableRow key={row.securityID}>
-                                            <TableCell>{row.securityID}</TableCell>
+                                            <TableCell>
+                                                <Button onClick={()=>getDetail(row.securityID)}>{row.securityID}</Button>
+                                                </TableCell>
                                             <TableCell>{row.securityName}</TableCell>
                                             <TableCell>{row.securityDescription}</TableCell>
                                             <TableCell>{row.isActive ? "true" : "false"}</TableCell>
@@ -144,6 +155,9 @@ const Equity2 = ({ tabValue }) => {
                     </TableContainer>
                 </>
             )}
+            
+            {/* Component to show Particular Details */}
+            <SecurityDetails securityID={displaySecurityID} open={displayAllDetailDialog} setOpen={setDisplayAllDetailDialog}/>
 
             <Dialog open={state.isModalOpen} onClose={handleModalClose}>
                 <DialogTitle>Edit Equity Data</DialogTitle>

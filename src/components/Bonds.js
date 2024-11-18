@@ -4,8 +4,12 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
 import { bondReducer, initialState, fetchBonds, setEditBond, closeModal, editBond, deleteBond } from './BondSlice';
 import TileComponent from './TileComponent';
 import CircularProgress from '@mui/material/CircularProgress';
+import SecurityDetails from './SecurityDetails';
 
 const Bonds = () => {
+    const [displayAllDetailDialog, setDisplayAllDetailDialog] = useState(false)
+    const [displaySecurityID, setDisplaySecurityID] = useState('')
+
     const [state, dispatch] = useReducer(bondReducer, initialState);
     const [activeBond, setactiveBond] = useState(true)
 
@@ -33,6 +37,11 @@ const Bonds = () => {
     const handleModalClose = () => {
         closeModal(dispatch);
     };
+
+    const getDetail = (id) => {
+        setDisplayAllDetailDialog(true);
+        setDisplaySecurityID(id)
+    }
 
     useEffect(() => {
         fetchBonds(dispatch);
@@ -92,7 +101,10 @@ const Bonds = () => {
                                 <TableBody>
                                     {state.bondData.filter(security => security.isActive).map((bond) => (
                                         <TableRow key={bond.securityID}>
-                                            <TableCell>{bond.securityID}</TableCell>
+                                            <TableCell>
+                                                <Button onClick={() => getDetail(bond.securityID)}>{bond.securityID}
+                                                </Button>
+                                            </TableCell>
                                             <TableCell>{bond.securityName}</TableCell>
                                             <TableCell>{bond.securityDescription}</TableCell>
                                             <TableCell>{bond.coupon}</TableCell>
@@ -137,6 +149,8 @@ const Bonds = () => {
                     </TableContainer>
                 </>
             )}
+
+            <SecurityDetails securityID={displaySecurityID} open={displayAllDetailDialog} setOpen={setDisplayAllDetailDialog} />
 
             <Dialog open={state.isModalOpen} onClose={handleModalClose}>
                 <DialogTitle>Edit Bond Data</DialogTitle>

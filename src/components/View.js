@@ -51,7 +51,12 @@ const View = () => {
   };
 
   useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+    if(!isAuthenticated)
+      window.location.href = "/auth";
+
     fetchData();
+    // eslint-disable-next-line
   }, [pageNumber, selectedDate]);
 
   useEffect(() => {

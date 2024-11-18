@@ -157,3 +157,6 @@ body {
     background: linear-gradient(135deg, #06d6a0, #118ab2);
   }
   
+  .secDetailsText{
+    color: white !important;
+  }

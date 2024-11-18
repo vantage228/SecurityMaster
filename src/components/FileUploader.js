@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Grid, Typography, Card, CardContent } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
@@ -46,20 +46,26 @@ function FileUploader() {
       const response = await axios.post(apiUrl, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-
-      alert(response.data);
+      
+      (response.data.includes("Database Error"))? alert('DB Error: Duplicate Security Name Not Allowed'): alert(response.data)
     }
     catch (error) {
-      console.error('Error during file upload:', error.response || error.message);
       alert(`Error: ${error.response?.data || 'An error occurred while uploading the file.'}`);
-    } finally {
+    } 
+    finally {
       setUploading(false);
     }
   };
 
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+    if(!isAuthenticated)
+      window.location.href = "/auth";
+  }, [])
+
 
   return (
-    <div>
+    <div style={{minHeight:"90vh"}}>
       <Navbar />
       <Grid container direction="column" alignItems="center" style={{ marginTop: '2rem' }}>
         <Typography variant="h4">Upload CSV Files</Typography>
@@ -69,14 +75,28 @@ function FileUploader() {
             <Grid item>
               <Card onClick={() => setSelectedCard('Equity')} style={{ cursor: 'pointer', width: '200px', textAlign: 'center' }}>
                 <CardContent>
-                  <Typography variant="h6">Equity</Typography>
+                  <Typography variant="h6">Equity
+                    <img src={require('../assets/equity.png')} style={{
+                      height: '35px',
+                      width: '35px',
+                      marginLeft: '12px',
+                      marginBottom: '-10px'
+                    }} alt='Security-Master_Logo' />
+                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
             <Grid item>
               <Card onClick={() => setSelectedCard('Bond')} style={{ cursor: 'pointer', width: '200px', textAlign: 'center' }}>
                 <CardContent>
-                  <Typography variant="h6">Bond</Typography>
+                  <Typography variant="h6">Bond
+                    <img src={require('../assets/bond.png')} style={{
+                      height: '35px',
+                      width: '35px',
+                      marginLeft: '12px',
+                      marginBottom: '-10px'
+                    }} alt='Security-Master_Logo' />
+                  </Typography>
                 </CardContent>
               </Card>
             </Grid>

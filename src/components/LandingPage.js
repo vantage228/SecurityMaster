@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Typography,
   Button,
@@ -13,12 +13,18 @@ import Navbar from "./Navbar";
 
 function LandingPage() {
   const navigate = useNavigate();
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+    if(!isAuthenticated)
+      window.location.href = "/auth";
+  }, [])
+  
 
   return (
     <>
       <Box
         sx={{
-          minHeight: "100vh",
+          minHeight: "90vh",
           background: "linear-gradient(135deg, #1e3c72, #2a5298)",
           color: "#fff",
           display: "flex",
@@ -65,6 +71,12 @@ function LandingPage() {
                 <CardContent>
                   <Typography variant="h5" component="div" sx={{ mb: 2 }}>
                     Security Master Viewer
+                    <img src={require('../assets/analysis.png')} style={{
+                            height: '35px',
+                            width: '35px',
+                            marginLeft: '12px',
+                            marginBottom: '-10px'
+                        }} alt='Security-Master_Logo'/>
                   </Typography>
                   <Typography variant="body2" color="inherit" paragraph>
                     View detailed information on securities and manage your
@@ -100,6 +112,12 @@ function LandingPage() {
                 <CardContent>
                   <Typography variant="h5" component="div" sx={{ mb: 2 }}>
                     File Uploader
+                    <img src={require('../assets/inbox.png')} style={{
+                            height: '35px',
+                            width: '35px',
+                            marginLeft: '12px',
+                            marginBottom: '-10px'
+                        }} alt='Security-Master_Logo'/>
                   </Typography>
                   <Typography variant="body2" color="inherit" paragraph>
                     Upload files to update security data quickly and
@@ -118,21 +136,6 @@ function LandingPage() {
             </Grid>
           </Grid>
         </Container>
-
-        <Box
-          sx={{
-            mt: 4,
-            py: 2,
-            background: "#1e3c72",
-            textAlign: "center",
-            borderTop: "1px solid rgba(255, 255, 255, 0.2)",
-          }}
-        >
-          <Typography variant="body2" color="inherit">
-            &copy; {new Date().getFullYear()} IVP Security Reference Master. All
-            rights reserved.
-          </Typography>
-        </Box>
       </Box>
     </>
   );

@@ -7,8 +7,11 @@ const EquityLogTable = () => {
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     useEffect(() => {
+        const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+        if(!isAuthenticated)
+            window.location.href = "/auth";
+
         const fetchLogs = async () => {
             try {
                 const response = await axios.get('https://localhost:7298/api/log');
@@ -22,6 +25,7 @@ const EquityLogTable = () => {
         };
         
         fetchLogs();
+        //eslint-disable-next-line
     }, []);
 
     if (loading) {
