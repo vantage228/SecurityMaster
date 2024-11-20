@@ -249,8 +249,12 @@ const Equity2 = ({ tabValue }) => {
                                             </span>
                                         </TableCell>
                                         <TableCell sx={{ display: "flex" }}>
-                                            <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(row)}>Edit</Button>
-                                            <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(row.securityID)}>Deactivate</Button>
+
+                                            <Button sx={{ margin: "2px" }} disabled={!row.isActive}
+                                                variant="contained" color="primary" onClick={() => handleEditClick(row)}>Edit</Button>
+                                            <Button disabled={!row.isActive}
+                                                sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(row.securityID)}>Deactivate</Button>
+
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -339,6 +343,9 @@ const Equity2 = ({ tabValue }) => {
                         fullWidth
                         margin="dense"
                         type="date"
+                        style={{
+                            border: state.editData.dividendDeclaredDate ? undefined : "2px solid red"
+                        }}
                         value={state.editData.dividendDeclaredDate ? state.editData.dividendDeclaredDate.split("T")[0] : ""}
                         onChange={handleInputChange}
                     />

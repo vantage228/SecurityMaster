@@ -218,8 +218,11 @@ const Bonds = () => {
                                         <TableCell>{bond.bidPrice}</TableCell>
                                         <TableCell>{bond.isActive ? 'True' : 'False'}</TableCell>
                                         <TableCell sx={{ width: "190px" }}>
-                                            <Button sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(bond)}>Edit</Button>
-                                            <Button sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(bond.securityID)}>Deactivate</Button>
+
+                                            <Button disabled={!bond.isActive}
+                                                sx={{ margin: "2px" }} variant="contained" color="primary" onClick={() => handleEditClick(bond)}>Edit</Button>
+                                            <Button disabled={!bond.isActive} sx={{ margin: "2px", backgroundColor: "red", color: "white", '&:hover': { backgroundColor: "darkred" } }} variant="contained" onClick={() => handleDeleteClick(bond.securityID)}>Deactivate</Button>
+
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -249,7 +252,9 @@ const Bonds = () => {
                         error={helperText.coupon !== ''}
                         helperText={helperText.coupon}
                     />
-                    <TextField name="penultimateCouponDate" label="Penultimate Coupon Date" type="date" fullWidth margin="dense" value={state.editBondData.penultimateCouponDate.split("T")[0]} onChange={handleInputChange} />
+
+                    <TextField name="penultimateCouponDate" required label="Penultimate Coupon Date" type="date" fullWidth margin="dense" style={{ border: state.editBondData.penultimateCouponDate ? undefined : "2px solid red" }} value={state.editBondData.penultimateCouponDate.split("T")[0]} onChange={handleInputChange} />
+
                     <FormControl fullWidth margin="dense">
                         <InputLabel id="formPFCreditRating-label">PF Credit Rating</InputLabel>
                         <Select

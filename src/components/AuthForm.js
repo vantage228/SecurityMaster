@@ -29,7 +29,10 @@ const AuthForm = () => {
     setMessage("");
     setError("");
 
-    const url = tabIndex === 0 ? "https://localhost:7298/api/User/login" : "https://localhost:7298/api/User/signup"; // Configure your URL
+
+    const url = tabIndex === 0 ? "https://localhost:7298/api/User/login" :
+                                 "https://localhost:7298/api/User/signup"; 
+                                 
     try {
       const response = await axios.post(url, {
         userID: formData.userID,

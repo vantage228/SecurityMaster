@@ -13,7 +13,8 @@ import {
   CircularProgress,
   Box,
 } from "@mui/material";
-import LineGraphDialog from './LineGraphDialog'
+import LineGraphDialog1 from './LineGraphDialog1'
+// import LineGraphDialog from './LineGraphDialog'
 import Navbar from "./Navbar";
 
 const View = () => {
@@ -167,6 +168,21 @@ const View = () => {
     setIsDialogOpen(false);
   };
 
+  const handleDownloadCsv = async () => {
+    try {
+      const response = await axios.get("https://localhost:7028/api/View/DownloadCsv", {
+        responseType: "blob",
+      });
+
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(response.data);
+      link.download = "vuMergeData.csv";
+      link.click();
+    } catch (error) {
+      console.error("Error downloading CSV:", error);
+    }
+  };
+
   return (
     <>
     <Navbar />
@@ -187,17 +203,21 @@ const View = () => {
           onChange={handleSearchChange}
         />
         <Button variant="contained" color="primary" onClick={exportToCSV}>
-          Export to CSV
+          Export Filtered Data
         </Button>
-
+        <Button variant="contained" color="primary" onClick={handleDownloadCsv}>
+          Export All Data
+        </Button>
         <Button variant="contained" color="primary" onClick={handleOpenDialog}>
         Show Line Graph
       </Button>
-      <LineGraphDialog
+      {/* <LineGraphDialog
         open={isDialogOpen}
         onClose={handleCloseDialog}
         data={data}
-      />
+      /> */}
+      <LineGraphDialog1 open={isDialogOpen} onClose={handleCloseDialog} />
+
       </Box>
 
       {loading ? (

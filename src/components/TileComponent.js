@@ -6,7 +6,7 @@ const TileComponent = ({ activeCount, inactiveCount, tabValue, handleActive, han
     <div>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Card sx={{
-          width: "15vw", height: "10vw", border: "2px solid black", display: "flex", flexDirection: "column", alignContent: "center", padding: "10px", margin: "2px", backgroundColor: "#e8f5e9", borderColor: "#2e7d32"
+          width: "15vw", height: "12vw", border: "2px solid black", display: "flex", flexDirection: "column", alignContent: "center", padding: "10px", margin: "2px", backgroundColor: "#e8f5e9", borderColor: "#2e7d32"
         }}>
           <Typography variant='h6' sx={{ textAlign: "center" }}>
             {(tabValue === 0) ? "Active Equities" : "Active Bonds"}
@@ -23,7 +23,7 @@ const TileComponent = ({ activeCount, inactiveCount, tabValue, handleActive, han
           <Button sx={{ margin: "2px" }} variant="contained" color="secondary" onClick={() => { (tabValue === 0) ? handleActive() : handleActiveBond() }}>View Active</Button>
         </Card>
         <Card sx={{
-          width: "15vw", height: "10vw", border: "2px solid black", display: "flex", flexDirection: "column", alignContent: "center", padding: "10px", margin: "2px",
+          width: "15vw", height: "12vw", border: "2px solid black", display: "flex", flexDirection: "column", alignContent: "center", padding: "10px", margin: "2px",
           backgroundColor: "#ffebee", borderColor: "#c62828",
         }}>
           <Typography variant='h6' sx={{ textAlign: "center" }}>
