@@ -1,0 +1,162 @@
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: linear-gradient(135deg, #1d3557, #457b9d);
+    color: #f1faee;
+  }
+
+  
+  /* Table Styling */
+  .MuiTable-root {
+    background: #1d3557;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+    color: #f1faee;
+  }
+  
+  .MuiTableCell-root {
+    text-align: center;
+    color: #a8dadc;
+    font-weight: bold;
+    font-size: 1rem;
+    height: 60px; /* Fixed row height */
+    padding: 10px; /* Consistent padding */
+    border: 1px solid #a8dadc; /* Borders for alignment */
+  }
+  
+  .MuiTableHead-root {
+    background: linear-gradient(135deg, #457b9d, #1d3557);
+    color: #f1faee;
+  }
+  
+  .MuiTableRow-root:hover {
+    background-color: #457b9d !important;
+    transition: background-color 0.3s ease;
+  }
+  
+  .MuiTableCell-body {
+    color: #f1faee !important;
+    font-size: 0.95rem;
+  }
+  
+  /* Highlight Rows */
+  .ytd-return-active {
+    color: #f7fdfb;
+    font-weight: bold;
+  }
+  
+  .ytd-return-inactive {
+    color: #fdfdfd;
+    font-weight: bold;
+  }
+  
+  /* Button Styling */
+  button {
+    margin: 5px;
+    color: #f1faee !important;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 8px 12px; /* Improved padding for better visibility */
+    transition: all 0.3s ease;
+    text-transform: uppercase; /* Make text clearer */
+  }
+  
+  button.MuiButton-containedPrimary {
+    background: linear-gradient(135deg, #06d6a0, #118ab2);
+  }
+  
+  button.MuiButton-containedPrimary:hover {
+    background: linear-gradient(135deg, #118ab2, #06d6a0);
+  }
+  
+  button.deactivate-button {
+    background: linear-gradient(135deg, #ef476f, #d62828) !important;
+  }
+  
+  button.deactivate-button:hover {
+    background: linear-gradient(135deg, #d62828, #ef476f) !important;
+  }
+  
+  .MuiButton-root {
+    font-weight: bold !important;
+  }
+  
+  /* Circular Progress */
+  .MuiCircularProgress-root {
+    color: #a8dadc !important;
+  }
+  
+  /* Dialog Styling */
+  .MuiDialog-paper {
+    background: linear-gradient(135deg, #1d3557, #457b9d) !important;
+    color: #f1faee;
+    border-radius: 15px;
+  }
+  
+  .MuiDialogTitle-root {
+    text-align: center;
+    color: #06d6a0 !important;
+  }
+  
+  .MuiDialogContent-root {
+    color: #f1faee !important;
+  }
+  
+  .MuiInputBase-root {
+    color: #f1faee !important;
+  }
+  
+  .MuiInputLabel-root {
+    color: #a8dadc !important;
+  }
+  
+  .MuiButton-containedSecondary {
+    background: black !important;
+    color: #ffffff !important;
+  }
+  
+  .MuiButton-containedSecondary:hover {
+    background: transparent  !important;
+    color: black !important;
+  }
+  
+  .MuiButton-containedPrimary {
+    color: #ffffff !important;
+  }
+  
+  /* Table Header Styling */
+  .MuiTableHead-root .MuiTableCell-root {
+    color: #f1faee !important;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #f1faee; /* Distinct border */
+  }
+
+  .NavbarCS{
+    background: linear-gradient(45deg, #e43b3b, transparent) !important;
+  }
+  
+  /* Tile Button Styling */
+  .tile-button {
+    font-weight: bold;
+    padding: 10px 20px;
+    margin: 5px;
+    background: linear-gradient(135deg, #118ab2, #06d6a0);
+    color: #f1faee !important;
+    text-transform: uppercase;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .tile-button:hover {
+    background: linear-gradient(135deg, #06d6a0, #118ab2);
+  }
+  
+  .secDetailsText{
+    color: white !important;
+  }
